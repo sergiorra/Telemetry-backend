@@ -1,0 +1,235 @@
+<!-- websockets.html -->
+<html>
+  <head>
+    <style>
+      .actions {
+        justify-content: center;
+        display: flex;
+        margin-bottom: 5px;
+      }
+
+      .data {
+        display: flex;
+      }
+
+      .data.disconnected {
+        background: orange;
+      }
+
+      .data_items {
+        align-items: center;
+        border: 1px solid #aaa;
+        flex-grow: 1;
+        height: 200px;
+        width: 200px;
+      }
+
+      .data_items > .data_item__title {
+        display: flex;
+        font-size: 30px;
+      }
+
+      .data_items > .data_item__value {
+        display: flex;
+        font-size: 50px;
+        word-break: break-word;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <!-- Load React. -->
+    <!-- Note: when deploying, replace "development.js" with "production.min.js". -->
+    <script
+      src="https://unpkg.com/react@16/umd/react.production.min.js"
+      crossorigin
+    ></script>
+    <script
+      src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js"
+      crossorigin
+    ></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <script type="text/babel">
+      "use strict";
+
+      class Test extends React.PureComponent {
+        constructor() {
+          super();
+
+          this.state = {
+            gear: "N",
+            output: "",
+            rpm: 0,
+            speed: 0,
+            status: "stop",
+            time: "",
+            connected: false
+          };
+
+          this.connect = this.connect.bind(this);
+          this.onSocketClosed = this.onSocketClosed.bind(this);
+          this.onSocketOpen = this.onSocketOpen.bind(this);
+          this.onSocketMessage = this.onSocketMessage.bind(this);
+          this.send = this.send.bind(this);
+          this.play = this.play.bind(this);
+          this.stop = this.stop.bind(this);
+          this.reset = this.reset.bind(this);
+        }
+
+        componentDidMount() {
+          this.connect();
+        }
+
+        componentWillUnmount() {
+          if (this.socket) {
+            this.socket.close();
+            delete this.socket;
+          }
+        }
+
+        connect() {
+          this.setState(
+            {
+              connected: false,
+              output: `${new Date().toISOString()} - Status: Connecting...\n${
+                this.state.output
+              }`
+            },
+            () => {
+              this.socket = new WebSocket(
+                `ws://${window.location.host}/replay`
+              );
+              this.socket.onopen = this.onSocketOpen;
+              this.socket.onmessage = this.onSocketMessage;
+              this.socket.onclose = this.onSocketClosed;
+            }
+          );
+        }
+
+        onSocketOpen() {
+          this.setState({
+            connected: true,
+            output: `${new Date().toISOString()} - Status: Connected\n${
+              this.state.output
+            }`
+          });
+        }
+
+        onSocketClosed() {
+          this.setState(
+            {
+              connected: false,
+              output: `${new Date().toISOString()} - Status: Disconnected\n${
+                this.state.output
+              }`
+            },
+            () => {
+              setTimeout(this.connect, 1000);
+            }
+          );
+        }
+
+        onSocketMessage(e) {
+          const parsedData = JSON.parse(e.data);
+          switch (parsedData.kind) {
+            case "data":
+              this.setState({ ...parsedData.data });
+              break;
+
+            case "status":
+              if (parsedData.data.status === "stop") {
+                this.stop();
+              }
+              break;
+
+            default:
+              this.setState({
+                output: `${new Date().toISOString()} - ${JSON.stringify(
+                  parsedData.data
+                )}\n${this.state.output}`
+              });
+          }
+        }
+
+        send(message) {
+          this.socket.send(JSON.stringify(message));
+        }
+
+        play() {
+          this.setState({ status: "play" }, () => {
+            this.send({ command: "play" });
+          });
+        }
+
+        stop() {
+          this.setState({ status: "stop" }, () => {
+            this.send({ command: "stop" });
+          });
+        }
+
+        reset() {
+          this.setState({ status: "reset" }, () => {
+            this.send({ command: "reset" });
+          });
+        }
+
+        render() {
+          return (
+            <div>
+              <section className="actions">
+                <button
+                  disabled={
+                    !this.state.connected || this.state.status === "play"
+                  }
+                  onClick={() => this.play()}
+                >
+                  PLAY
+                </button>
+                <button
+                  disabled={
+                    !this.state.connected || this.state.status !== "play"
+                  }
+                  onClick={() => this.stop()}
+                >
+                  STOP
+                </button>
+                <button
+                  disabled={!this.state.connected}
+                  onClick={() => this.reset()}
+                >
+                  RESET
+                </button>
+              </section>
+              <section
+                className={`data ${!this.state.connected && "disconnected"}`}
+              >
+                <div className="data_items">
+                  <div className="data_item__title">TIME</div>
+                  <div className="data_item__value">{this.state.time}</div>
+                </div>
+                <div className="data_items">
+                  <div className="data_item__title">RPM</div>
+                  <div className="data_item__value">{this.state.rpm} RPM</div>
+                </div>
+                <div className="data_items">
+                  <div className="data_item__title">GEAR</div>
+                  <div className="data_item__value">{this.state.gear}</div>
+                </div>
+                <div className="data_items">
+                  <div className="data_item__title">SPEED</div>
+                  <div className="data_item__value">
+                    {this.state.speed} km/h
+                  </div>
+                </div>
+              </section>
+              <pre>{this.state.output}</pre>
+            </div>
+          );
+        }
+      }
+
+      const domContainer = document.querySelector("#root");
+      ReactDOM.render(<Test />, domContainer);
+    </script>
+  </body>
+</html>
