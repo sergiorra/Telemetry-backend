@@ -4,20 +4,21 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"net/http"
 	"os"
 	"time"
 )
 
 type Simulation struct {
-	StartTime 	time.Time 		`json:"startTime"`
+	StartTime 	time.Time 	`json:"startTime"`
 	Data 		[]Data 		`json:"data"`
 }
 
 type Data struct {
-	Time  time.Time `json:"time"`
-	Gear  string `json:"gear"`
-	Rpm   int    `json:"rpm"`
-	Speed int    `json:"speed"`
+	Time  	time.Time 	`json:"time"`
+	Gear  	string 		`json:"gear"`
+	Rpm   	int    		`json:"rpm"`
+	Speed 	int    		`json:"speed"`
 }
 
 func main() {
@@ -35,12 +36,8 @@ func main() {
 
 	json.Unmarshal(byteValue, &simulation)
 
-	fmt.Println("Simulation startTime: ", simulation.StartTime)
-	for i := 0; i < len(simulation.Data); i++ {
-		fmt.Println("Data time: ", simulation.Data[i].Time)
-		fmt.Println("Data gear: ", simulation.Data[i].Gear)
-		fmt.Println("Data rpm: ", simulation.Data[i].Rpm)
-		fmt.Println("Data speed: ", simulation.Data[i].Speed)
-	}
+	http.Handle("/", http.FileServer(http.Dir("internal/static")))
+	http.ListenAndServe(":3000", nil)
 
 }
+
