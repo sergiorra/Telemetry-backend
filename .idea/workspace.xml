@@ -20,11 +20,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7498d4c4-4354-433f-a394-6d0139f49c56" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/data/simfile.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/templates/frontend.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmd/telemetry-backend/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/telemetry-backend/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/templates/frontend.html" beforeDir="false" afterPath="$PROJECT_DIR$/internal/static/index.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
