@@ -2,7 +2,6 @@ package server
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"time"
 
@@ -40,9 +39,7 @@ func (s *server) Router() http.Handler {
 	return s.router
 }
 
-
 var upgrader = websocket.Upgrader{}
-
 
 func (s *server) replay(w http.ResponseWriter, r *http.Request) {
 	ws, err := upgrader.Upgrade(w, r, nil)
@@ -50,20 +47,21 @@ func (s *server) replay(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Error opening websocket connection", http.StatusBadRequest)
 	}
 	defer ws.Close()
+
     simulation, err := s.repo.GetSimulation()
 	if err != nil {
 		http.Error(w, "Error getting simulation data", http.StatusInternalServerError)
 	}
+
 	incomingCommands := make(chan models.Command)
 	play, stop, reset := make(chan bool),make(chan bool),make(chan bool)
 
 	go s.readCommands(ws, incomingCommands)
-	go s.control(ws, simulation, play, stop, reset)
+	go s.controlCommands(ws, simulation, play, stop, reset)
 
 	for {
 		select {
 		case nextCommand := <-incomingCommands:
-			fmt.Println("Next commands: ", nextCommand)
 			switch nextCommand.Status {
 			case "play":
 				play <- true
@@ -77,7 +75,7 @@ func (s *server) replay(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func (s *server) control(ws *websocket.Conn, simulation *models.Simulation, play <-chan bool, stop <-chan bool, reset <-chan bool) {
+func (s *server) controlCommands(ws *websocket.Conn, simulation *models.Simulation, play <-chan bool, stop <-chan bool, reset <-chan bool) {
 	step := 0
 	isSending := false
 	currentTime := simulation.StartTime
@@ -87,19 +85,24 @@ func (s *server) control(ws *websocket.Conn, simulation *models.Simulation, play
 			isSending = true
 			go s.sendData(ws, simulation, &step, &currentTime, &isSending)
 		case <-stop:
-			response := &models.StatusResponse{
+			isSending = false
+			statusResponse := &models.StatusResponse{
 				Kind: "status",
 				Data: models.Status{
 					Status: "stop",
 				},
 			}
-			res, _ := json.Marshal(*response)
-			_ = ws.WriteMessage(0, res)
-			isSending = false
+			resBytes, _ := json.Marshal(*statusResponse)
+			_ = ws.WriteMessage(0, resBytes)
 		case <-reset:
-			step = 0
 			isSending = false
+			step = 0
 			currentTime = simulation.StartTime
+			dataResponse := &models.DataResponse{
+				Kind: "data",
+				Data: simulation.Data[step],
+			}
+			_ = ws.WriteJSON(dataResponse)
 		}
 	}
 }
@@ -118,9 +121,6 @@ func (s *server) sendData(ws *websocket.Conn, simulation *models.Simulation, ste
 		_ = ws.WriteJSON(dataResponse)
 		*currentTime = simulation.Data[*step].Time
 		*step++
-		if !(*isSending) {
-			break
-		}
 	}
 }
 

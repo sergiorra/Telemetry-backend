@@ -10,10 +10,8 @@ import (
 
 
 func main() {
-
 	repo := jsonfile.NewRepository("internal/data/simfile.json")
 	s := server.New(repo)
 	log.Fatal(http.ListenAndServe(":3000", s.Router()))
-
 }
 

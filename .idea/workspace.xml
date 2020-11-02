@@ -22,14 +22,7 @@
     <list default="true" id="7498d4c4-4354-433f-a394-6d0139f49c56" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmd/telemetry-backend/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/telemetry-backend/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/models/command.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/models/command.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/models/data.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/models/data.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/models/dataResponse.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/models/dataResponse.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/models/simulation.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/models/simulation.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/models/status.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/models/status.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/models/statusResponse.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/models/statusResponse.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/server/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/server/server.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
