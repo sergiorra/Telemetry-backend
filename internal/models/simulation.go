@@ -4,6 +4,6 @@ import "time"
 
 // Simulation representation of simulation into struct
 type Simulation struct {
-	StartTime 	time.Time 	`jsonfile:"startTime"`
-	Data 		[]Data 		`jsonfile:"data"`
+	StartTime 	time.Time 	`json:"startTime"`
+	Data 		[]Data 		`json:"data"`
 }
