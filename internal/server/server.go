@@ -2,6 +2,7 @@ package server
 
 import (
 	"encoding/json"
+	"github.com/sergiorra/Telemetry-backend/internal/config"
 	"net/http"
 	"time"
 
@@ -15,21 +16,25 @@ import (
 type server struct {
 	router 	http.Handler
 	repo 	repository.SimulationRepo
+	config 	*config.Config
 }
 
 type Server interface {
 	Router() http.Handler
 }
 
-func New(repo repository.SimulationRepo) Server {
-	a := &server{repo: repo}
+func New(repo repository.SimulationRepo, config *config.Config) Server {
+	a := &server{
+		repo: repo,
+		config: config,
+	}
 	router(a)
 	return a
 }
 
 func router(s *server) {
 	r := mux.NewRouter()
-	r.Handle("/", http.FileServer(http.Dir("internal/static"))).Methods(http.MethodGet)
+	r.Handle("/", http.FileServer(http.Dir(s.config.Server.PublicDir))).Methods(http.MethodGet)
 	r.HandleFunc("/replay", s.replay).Methods(http.MethodGet)
 
 	s.router = r
