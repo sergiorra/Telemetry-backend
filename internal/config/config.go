@@ -7,15 +7,17 @@ import (
 	"github.com/joho/godotenv"
 )
 
+// Config representation of config into struct
+type Config struct {
+	Server ServerConfig
+}
+
+// ServerConfig representation of serverConfig into struct
 type ServerConfig struct {
 	Host 		string
 	Port 		string
 	PublicDir   string
 	SimfileDir 	string
-}
-
-type Config struct {
-	Server ServerConfig
 }
 
 // New returns a new Config struct

@@ -10,6 +10,7 @@ type DataResponse struct {
 	Data InternalData 	`json:"data"`
 }
 
+// InternalData representation of internalData into struct
 type InternalData struct {
 	Time  	string 		`json:"time"`
 	Gear  	string 		`json:"gear"`
