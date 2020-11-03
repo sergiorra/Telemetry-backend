@@ -30,7 +30,7 @@ func New(repo repository.SimulationRepo) Server {
 func router(s *server) {
 	r := mux.NewRouter()
 	r.Handle("/", http.FileServer(http.Dir("internal/static"))).Methods(http.MethodGet)
-	r.HandleFunc("/replay", s.replay)
+	r.HandleFunc("/replay", s.replay).Methods(http.MethodGet)
 
 	s.router = r
 }
@@ -75,10 +75,21 @@ func (s *server) replay(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func (s *server) readCommands(ws *websocket.Conn, incomingCommands chan<- models.Command) {
+	for {
+		var command models.Command
+		_, message, _ := ws.ReadMessage()
+		_ = json.Unmarshal(message, &command)
+		incomingCommands <- command
+	}
+}
+
 func (s *server) controlCommands(ws *websocket.Conn, simulation *models.Simulation, play <-chan bool, stop <-chan bool, reset <-chan bool) {
 	step := 0
 	isSending := false
 	currentTime := simulation.StartTime
+	s.writeData(ws, simulation, &step)
+	step++
 	for {
 		select {
 		case <-play:
@@ -98,37 +109,28 @@ func (s *server) controlCommands(ws *websocket.Conn, simulation *models.Simulati
 			isSending = false
 			step = 0
 			currentTime = simulation.StartTime
-			dataResponse := &models.DataResponse{
-				Kind: "data",
-				Data: simulation.Data[step],
-			}
-			_ = ws.WriteJSON(dataResponse)
+			s.writeData(ws, simulation, &step)
 		}
 	}
 }
 
 func (s *server) sendData(ws *websocket.Conn, simulation *models.Simulation, step *int, currentTime *time.Time, isSending *bool) {
-	for *isSending {
+	for *isSending && *step < len(simulation.Data) {
 		nextTime := simulation.Data[*step].Time
 		countdown := nextTime.Sub(*currentTime).Milliseconds()
 		if countdown > 0 {
 			time.Sleep(time.Duration(countdown) * time.Millisecond)
 		}
-		dataResponse := &models.DataResponse{
-			Kind: "data",
-			Data: simulation.Data[*step],
-		}
-		_ = ws.WriteJSON(dataResponse)
+		s.writeData(ws, simulation, step)
 		*currentTime = simulation.Data[*step].Time
 		*step++
 	}
 }
 
-func (s *server) readCommands(ws *websocket.Conn, incomingCommands chan<- models.Command) {
-	for {
-		var command models.Command
-		_, message, _ := ws.ReadMessage()
-		_ = json.Unmarshal(message, &command)
-		incomingCommands <- command
+func (s *server) writeData(ws *websocket.Conn, simulation *models.Simulation, step *int) {
+	dataResponse := &models.DataResponse{
+		Kind: "data",
+		Data: simulation.Data[*step],
 	}
+	_ = ws.WriteJSON(dataResponse)
 }
