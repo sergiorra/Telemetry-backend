@@ -21,8 +21,7 @@
   <component name="ChangeListManager">
     <list default="true" id="7498d4c4-4354-433f-a394-6d0139f49c56" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmd/telemetry-backend/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/telemetry-backend/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/templates/frontend.html" beforeDir="false" afterPath="$PROJECT_DIR$/internal/static/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/server/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/server/server.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -41,11 +40,15 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="ProjectId" id="1jgG9JS0r7Ts5dFfQaLLMK9X2od" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="ASKED_SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="DefaultGoTemplateProperty" value="Go File" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
@@ -56,11 +59,11 @@
     <property name="last_opened_file_path" value="$PROJECT_DIR$/internal/data" />
   </component>
   <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/internal/data" />
-    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/internal/templates" />
+      <recent name="$PROJECT_DIR$/internal/data" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/internal/data" />
     </key>
   </component>
@@ -78,11 +81,24 @@
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="WindowStateProjectService">
     <state x="624" y="497" key="#GOROOT" timestamp="1604218330436">
       <screen x="0" y="0" width="1792" height="1120" />
     </state>
     <state x="624" y="497" key="#GOROOT/0.0.1792.1120@0.0.1792.1120" timestamp="1604218330436" />
+    <state x="360" y="222" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1604244657222">
+      <screen x="0" y="0" width="1792" height="1120" />
+    </state>
+    <state x="360" y="222" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1792.1120@0.0.1792.1120" timestamp="1604244657222" />
+    <state x="629" y="369" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1604344159575">
+      <screen x="0" y="0" width="1792" height="1120" />
+    </state>
+    <state x="629" y="369" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1792.1120@0.0.1792.1120" timestamp="1604344159575" />
+    <state x="672" y="297" key="com.goide.refactor.move.GoMoveDeclarationDialog" timestamp="1604336044168">
+      <screen x="0" y="0" width="1792" height="1120" />
+    </state>
+    <state x="672" y="297" key="com.goide.refactor.move.GoMoveDeclarationDialog/0.0.1792.1120@0.0.1792.1120" timestamp="1604336044168" />
   </component>
 </project>

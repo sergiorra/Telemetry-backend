@@ -1,43 +1,17 @@
 package main
 
 import (
-	"encoding/json"
-	"fmt"
-	"io/ioutil"
+	"log"
 	"net/http"
-	"os"
-	"time"
+
+	"github.com/sergiorra/Telemetry-backend/internal/repository/jsonfile"
+	"github.com/sergiorra/Telemetry-backend/internal/server"
 )
 
-type Simulation struct {
-	StartTime 	time.Time 	`json:"startTime"`
-	Data 		[]Data 		`json:"data"`
-}
-
-type Data struct {
-	Time  	time.Time 	`json:"time"`
-	Gear  	string 		`json:"gear"`
-	Rpm   	int    		`json:"rpm"`
-	Speed 	int    		`json:"speed"`
-}
 
 func main() {
-	jsonFile, err := os.Open("internal/data/simfile.json")
-	if err != nil {
-		fmt.Println(err)
-	}
-	defer jsonFile.Close()
-
-	byteValue, err := ioutil.ReadAll(jsonFile)
-	if err != nil {
-		fmt.Println(err)
-	}
-	var simulation Simulation
-
-	json.Unmarshal(byteValue, &simulation)
-
-	http.Handle("/", http.FileServer(http.Dir("internal/static")))
-	http.ListenAndServe(":3000", nil)
-
+	repo := jsonfile.NewRepository("internal/data/simfile.json")
+	s := server.New(repo)
+	log.Fatal(http.ListenAndServe(":3000", s.Router()))
 }
 
