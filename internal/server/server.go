@@ -2,6 +2,7 @@ package server
 
 import (
 	"encoding/json"
+	"github.com/sergiorra/Telemetry-backend/internal/config"
 	"net/http"
 	"time"
 
@@ -12,24 +13,31 @@ import (
 	"github.com/gorilla/websocket"
 )
 
+// server representation of server into struct
 type server struct {
 	router 	http.Handler
 	repo 	repository.SimulationRepo
+	config 	*config.Config
 }
 
 type Server interface {
 	Router() http.Handler
 }
 
-func New(repo repository.SimulationRepo) Server {
-	a := &server{repo: repo}
+// New returns a new Server struct with its routing
+func New(repo repository.SimulationRepo, config *config.Config) Server {
+	a := &server{
+		repo: repo,
+		config: config,
+	}
 	router(a)
 	return a
 }
 
+// router adds routing to server
 func router(s *server) {
 	r := mux.NewRouter()
-	r.Handle("/", http.FileServer(http.Dir("internal/static"))).Methods(http.MethodGet)
+	r.Handle("/", http.FileServer(http.Dir(s.config.Server.PublicDir))).Methods(http.MethodGet)
 	r.HandleFunc("/replay", s.replay).Methods(http.MethodGet)
 
 	s.router = r
@@ -41,6 +49,7 @@ func (s *server) Router() http.Handler {
 
 var upgrader = websocket.Upgrader{}
 
+// replay upgrades http connection to websocket and starts the process
 func (s *server) replay(w http.ResponseWriter, r *http.Request) {
 	ws, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
@@ -75,6 +84,7 @@ func (s *server) replay(w http.ResponseWriter, r *http.Request) {
 
 }
 
+// readCommands keeps reading all commands sent in the websocket connection
 func (s *server) readCommands(ws *websocket.Conn, incomingCommands chan<- models.Command) {
 	for {
 		var command models.Command
@@ -84,6 +94,7 @@ func (s *server) readCommands(ws *websocket.Conn, incomingCommands chan<- models
 	}
 }
 
+// controlCommands controls the actions for each command received
 func (s *server) controlCommands(ws *websocket.Conn, simulation *models.Simulation, play <-chan bool, stop <-chan bool, reset <-chan bool) {
 	step := 0
 	isSending := false
@@ -114,6 +125,7 @@ func (s *server) controlCommands(ws *websocket.Conn, simulation *models.Simulati
 	}
 }
 
+// sendData keeps sending data to the websocket connection till the end of simulation or  some "stop" or "reset" commands
 func (s *server) sendData(ws *websocket.Conn, simulation *models.Simulation, step *int, currentTime *time.Time, isSending *bool) {
 	for *isSending && *step < len(simulation.Data) {
 		nextTime := simulation.Data[*step].Time
@@ -127,10 +139,8 @@ func (s *server) sendData(ws *websocket.Conn, simulation *models.Simulation, ste
 	}
 }
 
+// writeData writes data to the websocket connection
 func (s *server) writeData(ws *websocket.Conn, simulation *models.Simulation, step *int) {
-	dataResponse := &models.DataResponse{
-		Kind: "data",
-		Data: simulation.Data[*step],
-	}
+	dataResponse := models.NewDataResponse(simulation.Data[*step])
 	_ = ws.WriteJSON(dataResponse)
 }

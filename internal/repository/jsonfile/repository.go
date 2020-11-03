@@ -9,6 +9,7 @@ import (
 	. "github.com/sergiorra/Telemetry-backend/internal/repository"
 )
 
+// repository representation of repository into struct
 type repository struct {
 	fileName string
 }
@@ -20,7 +21,7 @@ func NewRepository(fileName string) SimulationRepo {
 	}
 }
 
-// GetRoutes fetch routes data from csv
+// GetSimulation fetch simulation data from json file
 func (r *repository) GetSimulation() (*models.Simulation, error) {
 	jsonFile, err := os.Open(r.fileName)
 	if err != nil {
