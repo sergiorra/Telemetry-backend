@@ -23,7 +23,7 @@ type ServerConfig struct {
 // New returns a new Config struct
 func New() *Config {
 	if err := godotenv.Load(); err != nil {
-		log.Fatalln("No .env file found")
+		log.Fatalln("No .env.development file found")
 	}
 	return &Config{
 		Server: ServerConfig{
