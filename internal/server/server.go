@@ -44,7 +44,9 @@ func (s *server) Router() http.Handler {
 	return s.router
 }
 
+
 var upgrader = websocket.Upgrader{}
+var connections []*websocket.Conn
 
 func (s *server) replay(w http.ResponseWriter, r *http.Request) {
 	ws, err := upgrader.Upgrade(w, r, nil)
@@ -133,9 +135,6 @@ func (s *server) sendData(ws *websocket.Conn, simulation *models.Simulation, ste
 }
 
 func (s *server) writeData(ws *websocket.Conn, simulation *models.Simulation, step *int) {
-	dataResponse := &models.DataResponse{
-		Kind: "data",
-		Data: simulation.Data[*step],
-	}
+	dataResponse := models.NewDataResponse(simulation.Data[*step])
 	_ = ws.WriteJSON(dataResponse)
 }

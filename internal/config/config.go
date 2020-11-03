@@ -25,8 +25,8 @@ func New() *Config {
 	}
 	return &Config{
 		Server: ServerConfig{
-			Host: getEnv("HOST", ""),
-			Port: getEnv("PORT", ""),
+			Host: getEnv("HOST", "0.0.0.0"),
+			Port: getEnv("PORT", "3000"),
 			PublicDir: getEnv("PUBLIC_DIR", ""),
 			SimfileDir: getEnv("SIMFILE_DIR", ""),
 		},
